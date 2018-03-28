@@ -11,13 +11,16 @@
 
     <section id='newGame'>
         <p>FURRY GAME</p>
-        <button>Start game</button>
+        <button id='easyGame'>Easy</button>
+        <button id='hardGame'>Hard</button>
     </section>
 
     <section id='score'>
         <div>
-            SCORE<br>
-            <strong>0</strong>
+            <p>SCORE</p>
+            <p>
+                <strong>0</strong>
+            </p>
         </div>
     </section>
 
@@ -125,7 +128,7 @@
     </section>
 
     <section id='over' class='invisible'>
-        GAME OVER
+        <p>GAME OVER</p>
         <div class="result">SCORE: <span>0</span> pkt</div>
         <button onClick="window.location.reload()">New game</button>
     </section>

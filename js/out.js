@@ -74,10 +74,17 @@ var _game = __webpack_require__(1);
 
 __webpack_require__(4);
 
-var button = document.querySelector('button');
-button.addEventListener('click', function () {
+var easyGame = document.querySelector('#easyGame');
+var hardGame = document.querySelector('#hardGame');
+
+easyGame.addEventListener('click', function () {
    document.querySelector('#newGame').classList.add('invisible');
-   var furryGame = new _game.Game();
+   var furryGame = new _game.Game("easy");
+});
+
+hardGame.addEventListener('click', function () {
+   document.querySelector('#newGame').classList.add('invisible');
+   var furryGame = new _game.Game("hard");
 });
 
 /***/ }),
@@ -101,7 +108,7 @@ var _coin = __webpack_require__(3);
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Game = exports.Game = function () {
-    function Game() {
+    function Game(mode) {
         _classCallCheck(this, Game);
 
         this.board = document.querySelectorAll('#board div');
@@ -110,11 +117,15 @@ var Game = exports.Game = function () {
         this.score = 0;
         this.showFurry();
         this.startGame();
+        this.intervalTime = 250;
+        this.level = mode == "easy" ? 1 : 0.9;
     }
 
     _createClass(Game, [{
         key: "showFurry",
         value: function showFurry() {
+            console.log(this.interval);
+
             this.hideVisibleFurry();
             this.board[this.furry.index(this.furry.x, this.furry.y)].classList.add('furry');
         }
@@ -142,6 +153,7 @@ var Game = exports.Game = function () {
             } else if (this.furry.direction == 'down') {
                 this.furry.y++;
             }
+            this.startGame();
             this.gameOver();
             this.showFurry();
             this.checkCoinCollision();
@@ -170,6 +182,7 @@ var Game = exports.Game = function () {
             if (this.furry.x == this.coin.x && this.furry.y == this.coin.y) {
                 document.querySelector('.coin').classList.remove('coin');
                 this.score++;
+                this.intervalTime *= this.level;
                 document.querySelector('#score strong').innerText = this.score;
                 document.querySelector('#coinAudio').play();
 
@@ -183,9 +196,10 @@ var Game = exports.Game = function () {
             var _this = this;
 
             this.showCoin();
-            this.idSetInterval = setInterval(function () {
-                return _this.moveFurry();
-            }, 250);
+            var timeoutLoop = function timeoutLoop() {
+                setTimeout(_this.moveFurry(), _this.intervalTime);
+            };
+            this.idSetTimeout = setTimeout(timeoutLoop, this.intervalTime);
             document.addEventListener('keydown', function (event) {
                 return _this.turnFurry(event);
             });
@@ -195,7 +209,7 @@ var Game = exports.Game = function () {
         value: function gameOver() {
             if (this.furry.x < 0 || this.furry.x > 9 || this.furry.y < 0 || this.furry.y > 9) {
                 this.hideVisibleFurry();
-                clearInterval(this.idSetInterval);
+                clearTimeout(this.idSetTimeout);
 
                 document.querySelector('#over').classList.toggle('invisible');
                 document.querySelector('#over span').innerText = this.score;
@@ -310,7 +324,7 @@ exports = module.exports = __webpack_require__(6)(false);
 
 
 // module
-exports.push([module.i, "* {\n  box-sizing: border-box; }\n\nbody {\n  margin: 0;\n  padding: 0;\n  background-color: #2F343B; }\n\n#score {\n  width: 100%; }\n  #score div {\n    width: 10em;\n    height: 3em;\n    text-align: center;\n    padding: 0.5em;\n    background-color: #C77966;\n    border-radius: 1px;\n    box-shadow: 0 0 5px 0;\n    margin: 1em auto; }\n\n#board {\n  width: 640px;\n  height: 640px;\n  margin: 1em auto; }\n  #board div {\n    float: left;\n    width: 64px;\n    height: 64px;\n    background-color: #7E827A;\n    box-shadow: 0 0 15px 0; }\n\n#over {\n  position: fixed;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  z-index: 1;\n  background-color: #703030;\n  padding: 1.4em;\n  font-size: 150px;\n  text-align: center; }\n  #over .result {\n    text-align: center;\n    font-size: 100px;\n    margin-bottom: 1.85em; }\n\n#newGame {\n  position: fixed;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  z-index: 1;\n  background-color: rgba(112, 48, 48, 0.8);\n  padding: 1.4em;\n  font-size: 150px;\n  text-align: center; }\n\nbutton {\n  display: block;\n  width: 10em;\n  height: 3em;\n  text-align: center;\n  font-size: 32px;\n  padding: 0.5em;\n  background-color: #C77966;\n  border-radius: 5px;\n  border-width: 0;\n  box-shadow: 0 0 10px 0;\n  text-transform: uppercase;\n  font-family: 'Open Sans', sans-serif;\n  margin: 0 auto; }\n\n.furry {\n  background-image: url(\"./images/furry.png\");\n  background-repeat: no-repeat;\n  background-size: cover; }\n\n.coin {\n  background-image: url(\"./images/coin.png\");\n  background-repeat: no-repeat;\n  background-size: cover; }\n\n.invisible {\n  display: none; }\n", ""]);
+exports.push([module.i, "* {\n  box-sizing: border-box; }\n\nbody {\n  margin: 0;\n  padding: 0;\n  background-color: #2F343B; }\n\n#score {\n  width: 100%; }\n  #score div {\n    width: 10em;\n    height: 3em;\n    text-align: center;\n    padding: 0.5em;\n    background-color: #C77966;\n    border-radius: 1px;\n    box-shadow: 0 0 5px 0;\n    margin: 1em auto; }\n  #score p {\n    margin: 0; }\n\n#board {\n  width: 640px;\n  height: 640px;\n  margin: 1em auto; }\n  #board div {\n    float: left;\n    width: 64px;\n    height: 64px;\n    background-color: #7E827A;\n    box-shadow: 0 0 15px 0; }\n\n#over {\n  position: fixed;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  z-index: 1;\n  background-color: #703030;\n  padding: 0.8em;\n  font-size: 150px;\n  text-align: center; }\n  #over p {\n    margin: 0; }\n  #over .result {\n    text-align: center;\n    font-size: 100px; }\n\n#newGame {\n  position: fixed;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  z-index: 1;\n  background-color: rgba(112, 48, 48, 0.8);\n  padding: 0.8em;\n  font-size: 150px;\n  text-align: center; }\n  #newGame p {\n    font-size: 150px;\n    margin: 0; }\n\nbutton {\n  display: block;\n  width: 10em;\n  height: 3em;\n  text-align: center;\n  font-size: 32px;\n  padding: 0.5em;\n  background-color: #C77966;\n  border-radius: 5px;\n  border-width: 0;\n  box-shadow: 0 0 10px 0;\n  text-transform: uppercase;\n  font-family: 'Open Sans', sans-serif;\n  margin: 25px auto 0 auto; }\n\n.furry {\n  background-image: url(\"./images/furry.png\");\n  background-repeat: no-repeat;\n  background-size: cover; }\n\n.coin {\n  background-image: url(\"./images/coin.png\");\n  background-repeat: no-repeat;\n  background-size: cover; }\n\n.invisible {\n  display: none; }\n", ""]);
 
 // exports
 

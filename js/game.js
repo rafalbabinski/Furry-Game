@@ -2,15 +2,19 @@ import {Furry} from "./furry.js"
 import {Coin} from "./coin.js"
 
 export class Game {
-    constructor() {
+    constructor(mode) {
         this.board = document.querySelectorAll('#board div');
         this.furry = new Furry();
         this.coin = new Coin();
         this.score = 0;
         this.showFurry();
         this.startGame();
+        this.intervalTime = 250;
+        this.level = (mode == "easy") ? 1 : 0.9;
     }
     showFurry() {
+        console.log(this.interval);
+        
         this.hideVisibleFurry();
         this.board[this.furry.index(this.furry.x, this.furry.y)].classList.add('furry');
     }
@@ -32,6 +36,7 @@ export class Game {
         } else if (this.furry.direction == 'down') {
             this.furry.y++;
         }
+        this.startGame();
         this.gameOver();
         this.showFurry();
         this.checkCoinCollision();
@@ -56,6 +61,7 @@ export class Game {
         if (this.furry.x == this.coin.x && this.furry.y == this.coin.y) {
             document.querySelector('.coin').classList.remove('coin');
             this.score++;
+            this.intervalTime *= this.level;
             document.querySelector('#score strong').innerText = this.score;
             document.querySelector('#coinAudio').play();
 
@@ -65,13 +71,16 @@ export class Game {
     }
     startGame() {
         this.showCoin();
-        this.idSetInterval = setInterval(() => this.moveFurry(), 250);
+        let timeoutLoop = () => {
+            setTimeout(this.moveFurry(), this.intervalTime);
+        }
+        this.idSetTimeout = setTimeout(timeoutLoop, this.intervalTime);
         document.addEventListener('keydown', event => this.turnFurry(event));
     }
     gameOver() {
         if (this.furry.x < 0 || this.furry.x > 9 || this.furry.y < 0 || this.furry.y > 9) {
             this.hideVisibleFurry();
-            clearInterval(this.idSetInterval);
+            clearTimeout(this.idSetTimeout);
 
             document.querySelector('#over').classList.toggle('invisible');
             document.querySelector('#over span').innerText = this.score;
