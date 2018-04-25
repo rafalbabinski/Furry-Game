@@ -8,4 +8,7 @@ I have created this game as a homework during workshop in CodersLab - Code Schoo
 * game has two modes: easy, in which furry has a constant speed, and hard, in which furry speeds up every
 * have a fun
 
+#### Technologies:
+JavaScript(ES6), SASS
+
 ## [DEMO](https://rafalbabinski.github.io/Furry-Game)
